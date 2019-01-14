@@ -26,9 +26,7 @@ export default function() {
 
   this.namespace='/api';
 
-  this.get('/rentals',function(){
-    return{
-      data:[{
+  let rentals =[{
         type: 'rentals',
         id: 'grand-old-mansion',
         attributes: {
@@ -64,7 +62,16 @@ export default function() {
           image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg',
           description: "Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet."
         }
-  }]
+    }];
+
+    this.get('/rentals', function(db, request){
+      if(request.queryParams.city !== undefined){
+        let filteredRentals = rentals.filter(function(i){
+          return i.attributes.city.toLowerCase().indexOf(request.queryParams.city.toLowerCase()) !== -1;
+        });
+        return {data:filteredRentals};
+      } else{
+        return {data:rentals};
       }
-  });
+    });
 }
